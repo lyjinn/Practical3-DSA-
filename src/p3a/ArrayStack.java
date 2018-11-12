@@ -13,10 +13,10 @@ public class ArrayStack<T> implements StackInterface<T> {
 
     private T[] stack;    // array of stack entries
     private int topIndex; // index of top entry
-    private static final int DEFAULT_INITIAL_CAPACITY = 50;
+    private static final int DEFAULT_SIZE = 5;
 
     public ArrayStack() {
-        this(DEFAULT_INITIAL_CAPACITY);
+        this(DEFAULT_SIZE);
     } // end default constructor
 
     public ArrayStack(int initialCapacity) {

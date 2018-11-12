@@ -7,32 +7,32 @@ package p3a;
 
 /**
  *
- * @author Jinn
+ * @author Tarc
  */
-public class ArrayQueue<T> implements QueueInterface<T> {
+public class CircularArrayQueue<T> implements QueueInterface<T> {
 
-    private T[] queue;
+    private T[] array;
     private int firstIndex, lastIndex;
     private static final int DEFAULT_SIZE = 5;
 
-    public ArrayQueue() {
+    public CircularArrayQueue() {
         this(DEFAULT_SIZE);
     } // end default constructor
 
-    public ArrayQueue(int initialCapacity) {
-        queue = (T[]) new Object[initialCapacity];
+    public CircularArrayQueue(int initialCapacity) {
+        array = (T[]) new Object[initialCapacity];
         firstIndex = 0;
         lastIndex = -1;
     } // end constructor
 
     @Override
     public void enqueue(T newEntry) {
-        lastIndex++;
+        lastIndex = (lastIndex + 1) % array.length;
         if (isArrayFull()) // isArrayFull and
         {
             doubleArray();   // doubleArray are private
         }
-        queue[lastIndex] = newEntry;
+        array[lastIndex] = newEntry;
     } // end enqueue
 
     @Override
@@ -40,7 +40,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
         T front = null;
 
         if (!isEmpty()) {
-            front = queue[firstIndex];
+            front = array[firstIndex];
         }
 
         return front;
@@ -51,9 +51,9 @@ public class ArrayQueue<T> implements QueueInterface<T> {
         T front = null;
 
         if (!isEmpty()) {
-            front = queue[firstIndex];
+            front = array[firstIndex];
 
-            firstIndex++;
+            firstIndex = (firstIndex + 1) % array.length;
         } // end if
 
         return front;
@@ -61,14 +61,14 @@ public class ArrayQueue<T> implements QueueInterface<T> {
 
     @Override
     public boolean isEmpty() {
-        return lastIndex + 1 == firstIndex;
+        return (lastIndex+1)%array.length + 1 == (firstIndex+1)%array.length;
     } // end isEmpty
 
     @Override
     public void clear() {
         if (!isEmpty()) { // deallocates only the used portion
             for (int index = firstIndex; index <= lastIndex; index++) {
-                queue[index] = null;
+                array[index] = null;
             } // end for
 
             lastIndex = -1;
@@ -76,17 +76,21 @@ public class ArrayQueue<T> implements QueueInterface<T> {
     } // end clear
 
     private boolean isArrayFull() {
-        return lastIndex == queue.length;
-    } // end isArrayFull
+        return (lastIndex+2)%array.length + 1 == (firstIndex+2)%array.length;
+    }
 
     private void doubleArray() {
-        T[] oldQueue = queue;
-        int oldSize = oldQueue.length;
+        T[] oldArray = array;
+        int size = oldArray.length;
 
-        queue = (T[]) new Object[2 * oldSize];
+        array = (T[]) new Object[2 * size];
 
-        for (int index = 0; index < oldSize; index++) {
-            queue[index] = oldQueue[index];
-        } // end for
-    } // end doubleArray
+        for (int i = 0; i < (size - 1); i++) {
+            array[i] = oldArray[firstIndex];
+            firstIndex = (firstIndex + 1) % oldArray.length;
+        }
+
+        firstIndex = 0;
+        lastIndex = size - 1;
+    }
 }

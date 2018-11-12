@@ -17,15 +17,22 @@ public class TestPalindrome {
         Scanner input = new Scanner(System.in);
         String s;
         boolean isPalindrome = true;
-        System.out.print("Enter a word: ");
-        s = input.nextLine();
         StackInterface<Character> stack = new ArrayStack();
         QueueInterface<Character> queue = new ArrayQueue();
+        
+        System.out.print("Enter a word: ");
+        s = input.nextLine();
+        
         for(int i = 0 ; i < s.length(); ++i){
             char sc = Character.toUpperCase(s.charAt(i));
             stack.push(sc);
             queue.enqueue(sc);
         }
+        
+        if(queue.isEmpty() || stack.isEmpty()){
+            isPalindrome = false;
+        }
+        
         while(!queue.isEmpty()){
             if(stack.pop() != queue.dequeue()){
                 isPalindrome = false;
